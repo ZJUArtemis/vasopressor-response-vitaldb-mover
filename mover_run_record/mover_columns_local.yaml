@@ -1,0 +1,41 @@
+case_col: LOG_ID
+mrn_col: MRN
+surgery_table: <LOCAL_WORK>/patient_information.csv
+or_in_col: IN_OR_DTTM
+or_out_col: OUT_OR_DTTM
+obs_file: <LOCAL_WORK>/arterial_observations.csv
+obs_time_col: RECORDED_TIME
+obs_name_col: FLO_DISPLAY_NAME
+obs_value_col: MEAS_VALUE
+map_name_value: MAP-ART A-line
+bp_art_name_value: BP-ART A-line
+nibp_map_name_value: MAP-NIBP
+med_file: <LOCAL_WORK>/vasopressor_medications.csv
+med_name_col: MEDICATION_NM
+med_time_col: MED_ACTION_TIME
+med_dose_col: ADMIN_SIG
+med_dose_unit_col: DOSE_UNIT_NM
+med_route_col: MED_ROUTE_NM
+med_action_col: MAR_ACTION_NM
+vaso_name_patterns:
+  phenylephrine:
+  - phenylephrine
+  - neo-synephrine
+  - neosynephrine
+  ephedrine:
+  - ephedrine
+  norepinephrine:
+  - norepinephrine
+  - levophed
+  epinephrine:
+  - epinephrine
+  - adrenaline
+  vasopressin:
+  - vasopressin
+  - pitressin
+patient_file: <LOCAL_WORK>/patient_information.csv
+age_col: BIRTH_DATE
+sex_col: SEX
+height_col: HEIGHT_CM
+weight_col: WEIGHT_KG
+asa_col: ASA_RATING_C

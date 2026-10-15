@@ -1,0 +1,48 @@
+# MOVER column mapping for Topic 2 v3 (documented vasopressor response).
+# Fill the ABS paths and verify column names against the MOVER server schema.
+# The Topic 8 pre-flight (mover_preflight/) already enumerated these tables and
+# confirmed: medication table 27.9M rows, 100% time-parseable; intraop subset
+# 38,487 vasopressor cases at 97.26% minute precision; MAP in Patient Observations
+# long-format (FLO_DISPLAY_NAME='MAP-ART A-line') + BP-ART A-line "SBP/DBP" string.
+
+# ---- Case / surgery window ----
+case_col: LOG_ID                       # surgery/encounter id
+mrn_col: MRN                           # patient id for patient-level splitting
+surgery_table: /ABS/PATH/TO/patient_log_or_surgery.csv
+or_in_col: IN_OR_DTTM                  # surgery start (format %m/%d/%y %H:%M in MOVER)
+or_out_col: OUT_OR_DTTM
+
+# ---- Arterial MAP (long-format Patient Observations) ----
+obs_file: /ABS/PATH/TO/patient_observations.csv
+obs_time_col: RECORDED_TIME            # ISO with seconds in MOVER
+obs_name_col: FLO_DISPLAY_NAME
+obs_value_col: MEAS_VALUE
+map_name_value: "MAP-ART A-line"       # arterial MAP display name
+bp_art_name_value: "BP-ART A-line"     # "SBP/DBP" string -> parse for SBP/DBP/PP
+# fallback NIBP (do NOT mix with arterial unless arterial missing):
+nibp_map_name_value: "MAP-NIBP"
+
+# ---- Medications / MAR (the DOCUMENTED exposure) ----
+med_file: /ABS/PATH/TO/patient_medications.csv
+med_name_col: MEDICATION_NM
+med_time_col: ADMIN_TIME               # MAR administration time (NOT order time)
+med_dose_col: DOSE
+med_dose_unit_col: DOSE_UNIT
+med_route_col: ROUTE
+med_action_col: MAR_ACTION             # Given/Bolus/Rate Change/... (see mover_mar_actions.yaml)
+
+# vasopressor name matching (case-insensitive substring); MOVER brand/generic vary
+vaso_name_patterns:
+  phenylephrine:  ["phenylephrine", "neo-synephrine", "neosynephrine"]
+  ephedrine:      ["ephedrine"]
+  norepinephrine: ["norepinephrine", "levophed"]
+  epinephrine:    ["epinephrine", "adrenaline"]
+  vasopressin:    ["vasopressin", "pitressin"]
+
+# ---- Patient covariates ----
+patient_file: /ABS/PATH/TO/patient_information.csv
+age_col: AGE
+sex_col: SEX
+height_col: HEIGHT
+weight_col: WEIGHT
+asa_col: ASA_RATING_C                  # may be absent; drop if missing (align w/ VitalDB)

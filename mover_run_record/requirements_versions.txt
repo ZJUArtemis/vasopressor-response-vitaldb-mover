@@ -1,0 +1,6 @@
+pandas==2.2.3
+numpy==2.5.4
+scikit-learn==1.9.1
+xgboost==3.4.1
+pyarrow==26.0.0
+PyYAML==6.0.3
