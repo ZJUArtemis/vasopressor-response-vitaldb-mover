@@ -39,15 +39,18 @@ implicitly implies.
   0.95–1.04 mmHg, an interval spanning the investigator-set descriptive benchmark
   of 1 mmHg. The benchmark is not a validated minimum clinically important difference.
 - The model-class comparison depends on the comparator: XGBoost beats a Ridge model
-  fitted to squared error, but a linear median regression fitted to the same
-  absolute-error loss beats XGBoost by 0.14–0.34 mmHg. Choice of loss mattered more
-  than choice of hypothesis class.
+  fitted to squared error, but a linear median regression achieves lower mean absolute
+  error than the evaluated XGBoost configuration by 0.14–0.34 mmHg. XGBoost was trained
+  on squared error and the median regression on absolute error, so that comparison
+  reflects both model class and training objective and does not separate them. What it
+  does show is that greater model complexity did not guarantee lower error.
 - The calibrated classifier improves on a probability model built from pre-dose MAP
   alone (AUROC +0.057 to +0.062 whole cohort, +0.065 to +0.083 below 65 mmHg), so it
   carries information beyond the current pressure; absolute discrimination below
   65 mmHg is moderate.
 - Excluding administrations followed by further vasopressor treatment within the
-  outcome window leaves every conclusion unchanged.
+  outcome window preserved the qualitative conclusions, although individual effect
+  estimates changed.
 - Evaluation is internal to a single development source; no external validation was done.
 
 ## Repository layout

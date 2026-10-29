@@ -141,6 +141,37 @@ def orphan_numerals(tex_path, registry_df):
     return sorted(t for t in toks if strip(t) not in known_stripped)
 
 
+FORBIDDEN = [
+    ("loss-vs-class overclaim",
+     "the choice of loss mattered more than the choice of hypothesis class"),
+    ("blanket-unchanged claim", "Every conclusion is unchanged in direction and magnitude"),
+    ("blanket-unchanged claim (abstract)", "The findings were unchanged after excluding"),
+    ("loss conflation", "fitted to the same loss"),
+    ("comparison typo", "cheaper than both Ridge variants"),
+    ("stale cross-reference", "Supplementary Tables~S1 and S8"),
+    ("unqualified best-model designation", "The primary candidate model is XGBoost with treatment history."),
+]
+REQUIRED = [
+    ("XGBoost objective stated", "reg:squarederror"),
+    ("qualitative-preserved wording", "qualitative conclusions were preserved"),
+    ("preselected-model designation", "preselected XGBoost reference model"),
+    ("corrected cross-reference", "Supplementary Tables~S1 and S7"),
+]
+
+
+def check_text(tex_path):
+    fails = []
+    text = Path(tex_path).read_text() if Path(tex_path).exists() else ""
+    if not text:
+        return [f"manuscript not found at {tex_path}"]
+    for label, phrase in FORBIDDEN:
+        if phrase in text:
+            fails.append(f"FORBIDDEN [{label}]: found {phrase!r}")
+    for label, phrase in REQUIRED:
+        if phrase not in text:
+            fails.append(f"REQUIRED MISSING [{label}]: {phrase!r}")
+    return fails
+
 def main():
     import argparse
     ap = argparse.ArgumentParser()
@@ -176,7 +207,14 @@ def main():
         print("  " + (", ".join(orphans) if orphans else "(none)"))
     else:
         print(f"\n(tex not found at {tex_path}; skipped orphan scan)")
-    total = fails + did_fails
+    text_fails = check_text(str(tex_path)) if tex_path.exists() else []
+    print("\nTEXT-CONSISTENCY CHECKS (forbidden/required phrasings):")
+    if text_fails:
+        for f in text_fails:
+            print("  FAIL:", f)
+    else:
+        print(f"  all {len(FORBIDDEN)+len(REQUIRED)} phrasing checks pass")
+    total = fails + did_fails + text_fails
     if total:
         print(f"\nAUDIT FAILED: {len(total)} consistency error(s)"); sys.exit(1)
     print("\nAUDIT PASSED")
