@@ -1,0 +1,7 @@
+cohort,drug,n,n_patients
+sens,phenylephrine,19432,5080
+excluded,phenylephrine,9682,3174
+sens,ephedrine,8631,3544
+excluded,ephedrine,2954,1632
+sens,vasopressin,4354,1351
+excluded,vasopressin,1998,831

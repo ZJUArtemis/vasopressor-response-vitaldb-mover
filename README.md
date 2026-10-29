@@ -38,9 +38,16 @@ implicitly implies.
 - The best candidate model improves on a baseline-MAP-only reference by about
   0.95–1.04 mmHg, an interval spanning the investigator-set descriptive benchmark
   of 1 mmHg. The benchmark is not a validated minimum clinically important difference.
-- The calibrated classifier retains genuine predictive information (AUROC about
-  0.78–0.80, calibration close to the diagonal) but discrimination is lower in the
-  subgroup starting below 65 mmHg, where the decision matters most.
+- The model-class comparison depends on the comparator: XGBoost beats a Ridge model
+  fitted to squared error, but a linear median regression fitted to the same
+  absolute-error loss beats XGBoost by 0.14–0.34 mmHg. Choice of loss mattered more
+  than choice of hypothesis class.
+- The calibrated classifier improves on a probability model built from pre-dose MAP
+  alone (AUROC +0.057 to +0.062 whole cohort, +0.065 to +0.083 below 65 mmHg), so it
+  carries information beyond the current pressure; absolute discrimination below
+  65 mmHg is moderate.
+- Excluding administrations followed by further vasopressor treatment within the
+  outcome window leaves every conclusion unchanged.
 - Evaluation is internal to a single development source; no external validation was done.
 
 ## Repository layout
@@ -65,6 +72,8 @@ analysis/            runs locally from the extracted event table
   07_figure1_cohort_flow.py      Figure 1
   08_figures.py                  Figures 2-4 and Figure S1
   09_build_supplement.py         Supplementary Information LaTeX
+  10_fair_linear_comparators.py  tuned Ridge, median regression, baseline-MAP-only classifier
+  11_no_further_vasopressor_sensitivity.py  sensitivity cohort with no further treatment
 
 results/             aggregate result tables (no row-level data)
 ```
@@ -91,6 +100,8 @@ python analysis/05_build_results_index.py
 python analysis/06_audit_manuscript.py
 python analysis/07_figure1_cohort_flow.py
 python analysis/08_figures.py
+python analysis/10_fair_linear_comparators.py
+python analysis/11_no_further_vasopressor_sensitivity.py
 python analysis/09_build_supplement.py
 ```
 
@@ -109,6 +120,12 @@ exception is the binned reliability and regression-decile curve, which uses the
 five-partition mean prediction and is labelled a stability summary. Bootstrap
 resample counts are 2,000 for whole-cohort quantities, 1,000 for calibration
 parameters, subgroup and strata, and 500 per reliability bin. Seed 20261027.
+
+The paired model comparisons are also reported against linear comparators matched to the
+evaluation loss (tuned Ridge; median regression) and against a baseline-MAP-only
+probability model, in `10_fair_linear_comparators.py`, and repeated on a cohort with no
+further vasopressor treatment in the outcome window in
+`11_no_further_vasopressor_sensitivity.py`.
 
 `analysis/06_audit_manuscript.py` checks the reported numbers for internal
 consistency against `results/results_index.csv`. It is a consistency check of the

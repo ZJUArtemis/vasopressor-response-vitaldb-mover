@@ -1,0 +1,17 @@
+drug,role,features,model,mae_mean,mae_min,mae_max,n,n_patients
+phenylephrine,primary,base,ridge_tuned,10.973,10.967,10.979,29114,5331
+phenylephrine,primary,base,median,10.626,10.621,10.631,29114,5331
+phenylephrine,primary,base+hist,ridge_tuned,10.954,10.948,10.961,29114,5331
+phenylephrine,primary,base+hist,median,10.609,10.603,10.617,29114,5331
+ephedrine,primary,base,ridge_tuned,12.353,12.343,12.364,11585,3822
+ephedrine,primary,base,median,11.974,11.968,11.979,11585,3822
+ephedrine,primary,base+hist,ridge_tuned,12.227,12.223,12.234,11585,3822
+ephedrine,primary,base+hist,median,11.885,11.874,11.893,11585,3822
+vasopressin,primary,base,ridge_tuned,12.005,11.994,12.016,6352,1461
+vasopressin,primary,base,median,11.709,11.699,11.722,6352,1461
+vasopressin,primary,base+hist,ridge_tuned,11.728,11.716,11.74,6352,1461
+vasopressin,primary,base+hist,median,11.478,11.459,11.496,6352,1461
+norepinephrine,exploratory,base,ridge_tuned,12.311,11.934,12.529,757,218
+norepinephrine,exploratory,base,median,11.54,11.424,11.603,757,218
+norepinephrine,exploratory,base+hist,ridge_tuned,12.204,11.86,12.42,757,218
+norepinephrine,exploratory,base+hist,median,11.54,11.431,11.663,757,218
