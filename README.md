@@ -38,12 +38,12 @@ implicitly implies.
 - The best candidate model improves on a baseline-MAP-only reference by about
   0.95–1.04 mmHg, an interval spanning the investigator-set descriptive benchmark
   of 1 mmHg. The benchmark is not a validated minimum clinically important difference.
-- The model-class comparison depends on the comparator: XGBoost beats a Ridge model
-  fitted to squared error, but a linear median regression achieves lower mean absolute
-  error than the evaluated XGBoost configuration by 0.14–0.34 mmHg. XGBoost was trained
-  on squared error and the median regression on absolute error, so that comparison
-  reflects both model class and training objective and does not separate them. What it
-  does show is that greater model complexity did not guarantee lower error.
+- The model-class ranking depends on the training objective. A linear median regression
+  appeared to beat XGBoost by 0.14–0.34 mmHg, but the two had been trained on different
+  losses. Refitted on absolute error, XGBoost beat the median regression by 0.22–0.26 mmHg
+  on phenylephrine and ephedrine and was equivalent on vasopressin, and beat its own
+  squared-error version by 0.32–0.42 mmHg. No stable order across model families survives
+  loss matching; the objective mattered more than the family.
 - The calibrated classifier improves on a probability model built from pre-dose MAP
   alone (AUROC +0.057 to +0.062 whole cohort, +0.065 to +0.083 below 65 mmHg), so it
   carries information beyond the current pressure; absolute discrimination below
@@ -77,6 +77,8 @@ analysis/            runs locally from the extracted event table
   09_build_supplement.py         Supplementary Information LaTeX
   10_fair_linear_comparators.py  tuned Ridge, median regression, baseline-MAP-only classifier
   11_no_further_vasopressor_sensitivity.py  sensitivity cohort with no further treatment
+  12_xgboost_absolute_error.py   XGBoost refitted on absolute error (loss-matched comparison)
+  13_implementation_checks.py    patient isolation, OOF completeness, feature-leak checks
 
 results/             aggregate result tables (no row-level data)
 ```
@@ -105,6 +107,8 @@ python analysis/07_figure1_cohort_flow.py
 python analysis/08_figures.py
 python analysis/10_fair_linear_comparators.py
 python analysis/11_no_further_vasopressor_sensitivity.py
+python analysis/12_xgboost_absolute_error.py
+python analysis/13_implementation_checks.py
 python analysis/09_build_supplement.py
 ```
 

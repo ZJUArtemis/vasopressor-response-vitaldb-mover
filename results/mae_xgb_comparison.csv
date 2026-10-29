@@ -1,0 +1,7 @@
+drug,features,model,mae_mean,mae_min,mae_max,n,n_patients
+phenylephrine,base,xgb_mae,10.395,10.381,10.404,29114,5331
+phenylephrine,base+hist,xgb_mae,10.393,10.361,10.412,29114,5331
+ephedrine,base,xgb_mae,11.733,11.723,11.745,11585,3822
+ephedrine,base+hist,xgb_mae,11.624,11.607,11.634,11585,3822
+vasopressin,base,xgb_mae,11.734,11.7,11.756,6352,1461
+vasopressin,base+hist,xgb_mae,11.445,11.418,11.476,6352,1461

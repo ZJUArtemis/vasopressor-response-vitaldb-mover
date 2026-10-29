@@ -1,0 +1,128 @@
+{
+  "checks": [
+    {
+      "check": "exposure class [phenylephrine]",
+      "pass": true,
+      "detail": "iv_bolus n=29114; all rows of the analysed subset are iv_bolus; full class counts {'iv_bolus': 29114, 'infusion_start_or_bag_change': 2274, 'infusion_resume': 1412, 'non_iv_excluded': 27}"
+    },
+    {
+      "check": "exposure class [ephedrine]",
+      "pass": true,
+      "detail": "iv_bolus n=11585; all rows of the analysed subset are iv_bolus; full class counts {'iv_bolus': 11585, 'non_iv_excluded': 2}"
+    },
+    {
+      "check": "exposure class [vasopressin]",
+      "pass": true,
+      "detail": "iv_bolus n=6352; all rows of the analysed subset are iv_bolus; full class counts {'iv_bolus': 6352, 'infusion_start_or_bag_change': 422, 'infusion_resume': 111, 'non_iv_excluded': 8}"
+    },
+    {
+      "check": "exposure class [norepinephrine]",
+      "pass": true,
+      "detail": "iv_bolus n=757; all rows of the analysed subset are iv_bolus; full class counts {'infusion_start_or_bag_change': 769, 'iv_bolus': 757, 'infusion_resume': 491}"
+    },
+    {
+      "check": "patient isolation [phenylephrine]",
+      "pass": true,
+      "detail": "5 repeats x 5 folds; fold overlap violations=0; 5331 distinct patients across all folds"
+    },
+    {
+      "check": "patient isolation [ephedrine]",
+      "pass": true,
+      "detail": "5 repeats x 5 folds; fold overlap violations=0; 3822 distinct patients across all folds"
+    },
+    {
+      "check": "patient isolation [vasopressin]",
+      "pass": true,
+      "detail": "5 repeats x 5 folds; fold overlap violations=0; 1461 distinct patients across all folds"
+    },
+    {
+      "check": "patient isolation [norepinephrine]",
+      "pass": true,
+      "detail": "5 repeats x 5 folds; fold overlap violations=0; 218 distinct patients across all folds"
+    },
+    {
+      "check": "oof complete [phenylephrine/base]",
+      "pass": true,
+      "detail": "shape=(5, 29114) expected_n=29114 nan=False distinct repeats (first-50 fingerprint)=5"
+    },
+    {
+      "check": "oof complete [phenylephrine/base_hist]",
+      "pass": true,
+      "detail": "shape=(5, 29114) expected_n=29114 nan=False distinct repeats (first-50 fingerprint)=5"
+    },
+    {
+      "check": "oof complete [ephedrine/base]",
+      "pass": true,
+      "detail": "shape=(5, 11585) expected_n=11585 nan=False distinct repeats (first-50 fingerprint)=5"
+    },
+    {
+      "check": "oof complete [ephedrine/base_hist]",
+      "pass": true,
+      "detail": "shape=(5, 11585) expected_n=11585 nan=False distinct repeats (first-50 fingerprint)=5"
+    },
+    {
+      "check": "oof complete [vasopressin/base]",
+      "pass": true,
+      "detail": "shape=(5, 6352) expected_n=6352 nan=False distinct repeats (first-50 fingerprint)=5"
+    },
+    {
+      "check": "oof complete [vasopressin/base_hist]",
+      "pass": true,
+      "detail": "shape=(5, 6352) expected_n=6352 nan=False distinct repeats (first-50 fingerprint)=5"
+    },
+    {
+      "check": "oof complete [norepinephrine/base]",
+      "pass": true,
+      "detail": "shape=(5, 757) expected_n=757 nan=False distinct repeats (first-50 fingerprint)=5"
+    },
+    {
+      "check": "oof complete [norepinephrine/base_hist]",
+      "pass": true,
+      "detail": "shape=(5, 757) expected_n=757 nan=False distinct repeats (first-50 fingerprint)=5"
+    },
+    {
+      "check": "no follow-up column among features",
+      "pass": true,
+      "detail": "27 features; any fu_* present: []"
+    },
+    {
+      "check": "history features drawn from pre-dose columns",
+      "pass": true,
+      "detail": "14 history features, all named hist_*; 12 follow-up columns exist in the table and are unused by the models (none)"
+    },
+    {
+      "check": "outcome not among features",
+      "pass": true,
+      "detail": "delta_map_5min in features: False"
+    },
+    {
+      "check": "observability denominator computed (informational)",
+      "pass": true,
+      "detail": "phenylephrine 29,114/214,385 (13.6%); ephedrine 11,585/75,945 (15.2%); vasopressin 6,352/39,819 (16.0%)"
+    }
+  ],
+  "summary": {
+    "n_checks": 20,
+    "n_fail": 0
+  },
+  "observability_denominator": [
+    {
+      "drug": "phenylephrine",
+      "documented_iv_bolus_mar_rows": 214385,
+      "analysable_events": 29114,
+      "fraction": 0.1358
+    },
+    {
+      "drug": "ephedrine",
+      "documented_iv_bolus_mar_rows": 75945,
+      "analysable_events": 11585,
+      "fraction": 0.1525
+    },
+    {
+      "drug": "vasopressin",
+      "documented_iv_bolus_mar_rows": 39819,
+      "analysable_events": 6352,
+      "fraction": 0.1595
+    }
+  ]
+}
