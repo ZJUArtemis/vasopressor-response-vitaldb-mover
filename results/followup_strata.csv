@@ -1,0 +1,25 @@
+drug,role,intervention,present,n,n_patients,mae,lo,hi,observed_delta_mean,baseline_map_mean
+phenylephrine,primary,any additional vasopressor within 5 min (incl. same-drug re-dose),0,20787,5129,10.448,10.263,10.643,7.7,71.4
+phenylephrine,primary,any additional vasopressor within 5 min (incl. same-drug re-dose),1,8327,2974,11.62,11.25,12.011,2.44,71.9
+phenylephrine,primary,different-drug vasopressor within 5 min,0,26387,5196,10.519,10.349,10.695,6.4,71.7
+phenylephrine,primary,different-drug vasopressor within 5 min,1,2727,1560,13.341,12.682,14.01,4.2,70.7
+phenylephrine,primary,same-drug re-dose within 5 min,0,22505,5286,10.602,10.422,10.774,7.6,71.3
+phenylephrine,primary,same-drug re-dose within 5 min,1,6609,2506,11.403,11.011,11.82,1.39,72.5
+ephedrine,primary,any additional vasopressor within 5 min (incl. same-drug re-dose),0,8972,3574,11.536,11.257,11.812,10.7,71.2
+ephedrine,primary,any additional vasopressor within 5 min (incl. same-drug re-dose),1,2613,1512,13.69,13.144,14.318,5.98,71.4
+ephedrine,primary,different-drug vasopressor within 5 min,0,9864,3588,11.68,11.395,11.956,10.07,71.2
+ephedrine,primary,different-drug vasopressor within 5 min,1,1721,1139,13.98,13.29,14.766,7.14,71.3
+ephedrine,primary,same-drug re-dose within 5 min,0,10312,3821,11.785,11.54,12.054,10.41,71.1
+ephedrine,primary,same-drug re-dose within 5 min,1,1273,815,13.934,13.147,14.753,3.37,72.3
+vasopressin,primary,any additional vasopressor within 5 min (incl. same-drug re-dose),0,4591,1371,11.408,11.0,11.837,10.91,69.8
+vasopressin,primary,any additional vasopressor within 5 min (incl. same-drug re-dose),1,1761,769,12.675,12.025,13.334,3.94,68.4
+vasopressin,primary,different-drug vasopressor within 5 min,0,5281,1388,11.51,11.078,11.937,9.75,69.7
+vasopressin,primary,different-drug vasopressor within 5 min,1,1071,586,12.987,12.122,13.849,5.2,67.6
+vasopressin,primary,same-drug re-dose within 5 min,0,5304,1456,11.517,11.117,11.953,10.29,69.6
+vasopressin,primary,same-drug re-dose within 5 min,1,1048,507,12.986,12.257,13.784,2.35,68.4
+norepinephrine,exploratory,any additional vasopressor within 5 min (incl. same-drug re-dose),0,404,185,11.348,10.083,12.725,6.97,69.5
+norepinephrine,exploratory,any additional vasopressor within 5 min (incl. same-drug re-dose),1,353,140,12.633,10.981,14.467,1.58,71.2
+norepinephrine,exploratory,different-drug vasopressor within 5 min,0,592,193,11.655,10.646,12.788,5.14,70.1
+norepinephrine,exploratory,different-drug vasopressor within 5 min,1,165,91,12.995,10.659,15.583,2.02,71.1
+norepinephrine,exploratory,same-drug re-dose within 5 min,0,506,211,11.186,10.179,12.158,6.49,68.4
+norepinephrine,exploratory,same-drug re-dose within 5 min,1,251,99,13.482,11.35,16.018,0.37,74.1

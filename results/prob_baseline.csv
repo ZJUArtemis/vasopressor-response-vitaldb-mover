@@ -1,0 +1,9 @@
+drug,role,model,n,prevalence_whole_cohort,brier_model_mean,brier_oof_prevalence_mean,brier_skill_vs_oof_prevalence
+phenylephrine,primary,logit,29114,0.8044,0.1287,0.1574,0.1821
+phenylephrine,primary,xgb,29114,0.8044,0.126,0.1574,0.1995
+ephedrine,primary,logit,11585,0.8458,0.1106,0.1304,0.1521
+ephedrine,primary,xgb,11585,0.8458,0.109,0.1304,0.1643
+vasopressin,primary,logit,6352,0.8001,0.1339,0.1601,0.1637
+vasopressin,primary,xgb,6352,0.8001,0.1332,0.1601,0.1682
+norepinephrine,exploratory,logit,757,0.6896,0.1872,0.2155,0.1313
+norepinephrine,exploratory,xgb,757,0.6896,0.1888,0.2155,0.1242

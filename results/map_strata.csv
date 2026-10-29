@@ -1,0 +1,13 @@
+drug,role,stratum,n,n_patients,mae,lo,hi,observed_delta_mean,baseline_map_mean
+phenylephrine,primary,lt65,10219,3428,10.529,10.269,10.798,12.86,58.4
+phenylephrine,primary,65to75,11359,3831,9.69,9.488,9.907,7.98,69.5
+phenylephrine,primary,gt75,7536,2901,12.776,12.325,13.264,-5.55,92.5
+ephedrine,primary,lt65,4282,2164,11.977,11.568,12.383,16.34,58.3
+ephedrine,primary,65to75,4430,2322,11.064,10.722,11.417,11.28,69.6
+ephedrine,primary,gt75,2873,1624,13.563,12.929,14.215,-2.89,93.0
+vasopressin,primary,lt65,2623,997,12.267,11.717,12.856,15.76,57.0
+vasopressin,primary,65to75,2206,930,10.784,10.268,11.325,10.28,69.7
+vasopressin,primary,gt75,1523,690,12.297,11.524,13.094,-4.58,90.2
+norepinephrine,exploratory,lt65,342,157,11.436,10.022,12.994,10.14,57.1
+norepinephrine,exploratory,65to75,242,111,11.39,9.76,13.428,6.98,69.1
+norepinephrine,exploratory,gt75,173,77,13.737,11.067,17.01,-10.31,98.0

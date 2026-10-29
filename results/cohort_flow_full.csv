@@ -1,0 +1,16 @@
+step,n_events,n_patients,note
+A_raw_documented_MAR_rows_all_vasopressors,990017.0,,audit log: documented vasopressor MAR rows (admin+rate)
+B_raw_arterial_MAP_rows,6957157.0,,audit log: raw arterial MAP rows pre-filter
+C_cases_with_documented_candidates,,48344.0,audit log: cases with documented candidate administrations
+D_raw_study_drug_administrations_all_classes,918818.0,,v12_summary event_class_counts summed over 4 study drugs (pre MAP-linkage)
+E_MAP_linked_administrations_incl_epinephrine,57003.0,6974.0,event_master: administrations with usable pre/post arterial MAP window
+F_MAP_linked_study_drugs,53324.0,6690.0,exclude epinephrine (not a study drug)
+G_class_iv_bolus,47808.0,6471.0,mutually exclusive event class of F
+G_class_infusion_start_or_bag_change,3465.0,2718.0,mutually exclusive event class of F
+G_class_infusion_resume,2014.0,1235.0,mutually exclusive event class of F
+G_class_non_iv,37.0,19.0,mutually exclusive event class of F
+G_class_uncertain_unit,0.0,0.0,mutually exclusive event class of F
+G_class_rate_documented_as_given,0.0,0.0,mutually exclusive event class of F
+H_bolus_all_study_drugs,47808.0,6471.0,primary analysis cohort = IV-bolus class
+I_bolus_three_primary,47051.0,6451.0,phenylephrine+ephedrine+vasopressin
+J_bolus_norepinephrine_exploratory,757.0,218.0,exploratory arm

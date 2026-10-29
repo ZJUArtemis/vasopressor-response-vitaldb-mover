@@ -1,11 +1,10 @@
-# Never commit patient-level or per-event data (VitalDB / MOVER DUA)
-*.parquet
-*_sample.csv
-oof_*
-external_oof_*
-local_work/
-*.vital
-# Python
 __pycache__/
 *.pyc
-.ipynb_checkpoints/
+data/
+host_extraction/outputs/
+host_extraction/fixtures/
+results/figures/
+*.aux
+*.log
+*.toc
+*.out

@@ -1,0 +1,62 @@
+case_col: LOG_ID
+mrn_col: MRN
+surgery_table: /PATH/TO/MOVER/DATA/patient_information.csv
+or_in_col: IN_OR_DTTM
+or_out_col: OUT_OR_DTTM
+obs_file: /PATH/TO/MOVER/DATA/arterial_observations.csv
+obs_time_col: RECORDED_TIME
+obs_name_col: FLO_DISPLAY_NAME
+obs_value_col: MEAS_VALUE
+map_name_value: MAP-ART A-line
+bp_art_name_value: BP-ART A-line
+nibp_map_name_value: MAP-NIBP
+med_file: /PATH/TO/MOVER/DATA/vasopressor_medications.csv
+med_name_col: MEDICATION_NM
+med_time_col: MED_ACTION_TIME
+med_dose_col: ADMIN_SIG
+med_dose_unit_col: DOSE_UNIT_NM
+med_route_col: MED_ROUTE_NM
+med_action_col: MAR_ACTION_NM
+vaso_name_patterns:
+  phenylephrine:
+  - phenylephrine
+  - neo-synephrine
+  - neosynephrine
+  ephedrine:
+  - ephedrine
+  norepinephrine:
+  - norepinephrine
+  - levophed
+  epinephrine:
+  - epinephrine
+  - adrenaline
+  vasopressin:
+  - vasopressin
+  - pitressin
+patient_file: /PATH/TO/MOVER/DATA/patient_information.csv
+age_col: BIRTH_DATE
+sex_col: SEX
+height_col: HEIGHT_CM
+weight_col: WEIGHT_KG
+asa_col: ASA_RATING_C
+
+# ---- optional columns (leave blank if the columns do not exist) ----
+# Timestamp audit: the MAR entry and last-modification timestamps, if present in
+# vasopressor_medications.csv. Run `bash run_v8.sh --inspect` first and copy the
+# exact column names from the printed census. If they are absent, leave blank and
+# the audit is skipped (this is reported, not silently ignored).
+med_entry_time_col:
+med_mod_time_col:
+
+# ---- optional columns (leave blank if absent). Run --inspect to see names. ----
+# Order-level fields that let an infusion's running rate be reconstructed and
+# a "new bag" be distinguished from a genuine infusion start.
+med_order_id_col:          # order / prescription identifier shared by rows of one infusion
+med_order_start_col:       # order start timestamp
+med_order_end_col:         # order end timestamp
+# Intra-op fluid and blood-product tables, if present as separate files.
+fluid_file:                # CSV with case_col, a timestamp, a volume; leave blank if none
+fluid_time_col:
+fluid_volume_col:
+blood_file:
+blood_time_col:

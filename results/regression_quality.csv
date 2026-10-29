@@ -1,0 +1,5 @@
+drug,role,n,n_patients,outcome_sd,mae_mean,mae_min,mae_max,rmse_mean,mae_over_sd_mean,r2_mean,r2_min,r2_max,r2_boot_lo,r2_boot_hi,calib_slope_mean,calib_slope_boot_lo,calib_slope_boot_hi,calib_intercept_mean,pct_err_gt_5_mean,pct_err_gt_5_lo,pct_err_gt_5_hi,pct_err_gt_10_mean,pct_err_gt_10_lo,pct_err_gt_10_hi,pct_err_gt_15_mean,pct_err_gt_15_lo,pct_err_gt_15_hi
+phenylephrine,primary,29114,5331,21.909,10.783,10.771,10.795,16.999,0.4922,0.398,0.3916,0.4079,0.367,0.4259,0.958,0.912,1.001,0.251,66.1,65.5,66.7,37.3,36.6,37.9,20.2,19.6,20.8
+ephedrine,primary,11585,3822,23.161,12.021,12.0,12.066,18.145,0.519,0.3862,0.3773,0.392,0.3456,0.4229,0.973,0.922,1.021,0.232,70.3,69.5,71.1,43.7,42.7,44.7,25.2,24.3,26.1
+vasopressin,primary,6352,1461,22.705,11.759,11.728,11.777,17.623,0.5179,0.3974,0.3847,0.4059,0.3431,0.4492,0.966,0.89,1.033,0.232,68.5,67.3,69.7,43.2,41.9,44.6,25.3,24.0,26.5
+norepinephrine,exploratory,757,218,20.814,11.947,11.745,12.155,17.628,0.574,0.2815,0.2415,0.3186,0.0866,0.4144,0.784,0.579,0.958,0.648,68.3,65.2,71.4,43.2,39.2,47.6,26.6,23.0,30.4

@@ -1,0 +1,5 @@
+drug,role,n,n_patients,did,ci_lo,ci_hi,hist_xgb,hist_ridge
+phenylephrine,primary,29114,5331,-0.0031,-0.0208,0.0145,-0.0222,-0.0191
+ephedrine,primary,11585,3822,0.0007,-0.0291,0.032,-0.126,-0.1267
+vasopressin,primary,6352,1461,-0.0169,-0.0679,0.0385,-0.2932,-0.2763
+norepinephrine,exploratory,757,218,0.1829,-0.3758,0.7856,0.1985,0.0157

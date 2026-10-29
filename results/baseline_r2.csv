@@ -1,0 +1,5 @@
+drug,n,r2_baseline_only_mean,r2_baseline_only_min,r2_baseline_only_max,r2_full_mean,r2_increment
+phenylephrine,29114,0.312,0.3106,0.3129,0.398,0.086
+ephedrine,11585,0.2924,0.2906,0.2946,0.3862,0.0938
+vasopressin,6352,0.3463,0.345,0.3469,0.3974,0.0511
+norepinephrine,757,-0.0914,-0.1308,-0.0265,0.2815,0.3729

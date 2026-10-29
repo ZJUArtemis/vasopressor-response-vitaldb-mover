@@ -1,0 +1,4 @@
+drug,n,n_patients,other_vaso_5m_pct,same_redose_5m_pct,union_5m_pct
+phenylephrine,29114,5331,9.37,22.7,28.6
+ephedrine,11585,3822,14.86,10.99,22.56
+vasopressin,6352,1461,16.86,16.5,27.72

@@ -1,0 +1,4 @@
+drug,n,pct_with_recent_rate,rate_age_median_min,rate_age_p25_min,rate_age_p75_min,n_distinct_units
+phenylephrine,29114,21.69,28.0,7.0,154.0,1
+ephedrine,11585,0.0,,,,0
+vasopressin,6352,15.11,65.0,18.8,411.5,1
