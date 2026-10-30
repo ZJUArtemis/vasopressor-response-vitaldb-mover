@@ -633,7 +633,7 @@ W(r"\clearpage")
 W(r"\section*{Supplementary Table S10. Substantive changes across versions of this analysis}")
 W(r"\addcontentsline{toc}{section}{Table S10. Version history}")
 W(r"""The analysis was revised repeatedly in the light of earlier analyses of the same database and of
-earlier analyses of the same database. Only versions in which the cohort definition or a reading of the results changed
+pre-submission review. Only versions in which the cohort definition or a reading of the results changed
 substantively are listed; purely editorial revisions are omitted. None of the versions was publicly
 registered, so the sequence is a record of what was done, not a pre-specification.""")
 VERSIONS = [
