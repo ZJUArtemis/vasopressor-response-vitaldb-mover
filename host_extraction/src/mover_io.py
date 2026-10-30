@@ -123,12 +123,15 @@ def window_stats(mapcase, t0, offset_min=0, pre_s=600, post_s=600):
     # pre-window median was used instead of excluding the administration (0.69% of
     # analysed administrations; see Supplementary Table S16). Set STRICT_BASELINE_WINDOW
     # to True to exclude such administrations instead.
-    if len(pre_last2):
+    baseline_n_2min = int(len(pre_last2))
+    if baseline_n_2min:
         baseline = float(pre_last2['_map'].median())
+        used_fallback = False
     elif STRICT_BASELINE_WINDOW:
         return None
     else:
         baseline = float(pre['_map'].median())
+        used_fallback = True
     if not np.isfinite(baseline):
         return None
     seg5 = post[(post['_t'] >= t0 + pd.Timedelta(seconds=240)) & (post['_t'] <= t0 + pd.Timedelta(seconds=360))]
@@ -140,6 +143,8 @@ def window_stats(mapcase, t0, offset_min=0, pre_s=600, post_s=600):
     trend = np.polyfit(mins, vals, 1)[0] if len(vals) > 3 else np.nan
     return {
         'baseline_map': round(baseline, 2),
+        'baseline_n_2min': baseline_n_2min,          # samples in the 2-min window (0 => fallback)
+        'baseline_used_fallback': used_fallback,
         'delta_map_5min': round(dmap5, 2),
         'ctx_map_mean': round(float(np.mean(vals)), 2),
         'ctx_map_min': round(float(np.min(vals)), 2),

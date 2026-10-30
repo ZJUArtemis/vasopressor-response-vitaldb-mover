@@ -1,0 +1,16 @@
+drug,model,n_all,n_intravenous,n_intramuscular,n_missing_route,mae_all,mae_intravenous_only,change
+phenylephrine,xgb_sq,29114,29114,0,0,10.783,10.783,0.0
+phenylephrine,xgb_mae,29114,29114,0,0,10.393,10.393,0.0
+phenylephrine,median,29114,29114,0,0,10.609,10.609,0.0
+phenylephrine,ridge_tuned,29114,29114,0,0,10.954,10.954,0.0
+phenylephrine,baseline_map,29114,29114,0,0,11.794,11.794,0.0
+ephedrine,xgb_sq,11585,11580,5,0,12.021,12.023,0.0019
+ephedrine,xgb_mae,11585,11580,5,0,11.624,11.626,0.0028
+ephedrine,median,11585,11580,5,0,11.885,11.887,0.0026
+ephedrine,ridge_tuned,11585,11580,5,0,12.227,12.228,0.0019
+ephedrine,baseline_map,11585,11580,5,0,12.969,12.971,0.0024
+vasopressin,xgb_sq,6352,6350,2,0,11.759,11.758,-0.0016
+vasopressin,xgb_mae,6352,6350,2,0,11.445,11.443,-0.0018
+vasopressin,median,6352,6350,2,0,11.478,11.477,-0.0014
+vasopressin,ridge_tuned,6352,6350,2,0,11.728,11.726,-0.0017
+vasopressin,baseline_map,6352,6350,2,0,12.798,12.797,-0.001

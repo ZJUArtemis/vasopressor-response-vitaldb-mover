@@ -38,19 +38,19 @@ implicitly implies.
 - The best candidate model improves on a baseline-MAP-only reference by about
   0.95–1.04 mmHg, an interval spanning the investigator-set descriptive benchmark
   of 1 mmHg. The benchmark is not a validated minimum clinically important difference.
-- The model-class ranking depends on the training objective. A linear median regression
+- The model-class ordering depended on the training objective. A linear median regression
   appeared to beat XGBoost by 0.14–0.34 mmHg, but the two had been trained on different
   losses. Refitted on absolute error, XGBoost beat the median regression by 0.22–0.26 mmHg
-  on phenylephrine and ephedrine and was equivalent on vasopressin, and beat its own
-  squared-error version by 0.32–0.42 mmHg. No stable order across model families survives
-  loss matching; the objective mattered more than the family.
+  on phenylephrine and ephedrine; the vasopressin comparison was inconclusive. It also beat
+  its own squared-error version by 0.32–0.42 mmHg. The comparisons were sensitive to the
+  training objective and the observed gains were small.
 - The calibrated classifier improves on a probability model built from pre-dose MAP
   alone (AUROC +0.057 to +0.062 whole cohort, +0.065 to +0.083 below 65 mmHg), so it
   carries information beyond the current pressure; absolute discrimination below
   65 mmHg is moderate.
 - Excluding administrations followed by further vasopressor treatment within the
-  outcome window preserved the qualitative conclusions, although individual effect
-  estimates changed.
+  outcome window broadly preserved the treatment-history, squared-error model-class and
+  probability-model findings; the loss-matched comparison was not refitted in that cohort.
 - Evaluation is internal to a single development source; no external validation was done.
 
 ## Repository layout
@@ -79,7 +79,7 @@ analysis/            runs locally from the extracted event table
   11_no_further_vasopressor_sensitivity.py  sensitivity cohort with no further treatment
   12_xgboost_absolute_error.py   XGBoost refitted on absolute error (loss-matched comparison)
   13_implementation_checks.py    patient isolation, OOF completeness, feature-leak checks
-  14_strict_baseline_window.py   sensitivity to a strict 2-minute baseline window
+  14_route_audit.py              per-drug, per-model re-score on the intravenous subset
 
 results/             aggregate result tables (no row-level data)
 ```
@@ -110,7 +110,7 @@ python analysis/10_fair_linear_comparators.py
 python analysis/11_no_further_vasopressor_sensitivity.py
 python analysis/12_xgboost_absolute_error.py
 python analysis/13_implementation_checks.py
-python analysis/14_strict_baseline_window.py
+python analysis/14_route_audit.py
 python analysis/09_build_supplement.py
 ```
 
@@ -143,10 +143,13 @@ reported values, not an independent re-extraction of source data.
 ### Two implementation details that differ from an ideal protocol
 
 - **Baseline window.** When the 2-minute pre-dose window contained no sample, the published
-  extraction used the median of the 10-minute pre-window rather than excluding the record
-  (0.69% of analysed administrations). `analysis/14_strict_baseline_window.py` recomputes
-  the errors without those records; no mean absolute error changes by more than 0.04 mmHg.
-  `host_extraction/src/mover_io.py` exposes `STRICT_BASELINE_WINDOW` to exclude them instead.
+  extraction used the median of the 10-minute pre-window rather than excluding the record.
+  The released event-level table does not record how many administrations took this
+  fallback, and it cannot be inferred from the stored columns (an earlier attempt to do so
+  by comparing the baseline with the 10-minute mean was invalid and has been removed).
+  `host_extraction/src/mover_io.py` now emits `baseline_n_2min` and
+  `baseline_used_fallback` per event and exposes `STRICT_BASELINE_WINDOW` so a future
+  extraction can either count or exclude them.
 - **Route.** The route keyword rule did not include "intramuscular"; seven analysed
   administrations carried that route (0.01%). Removing them changes no error by more than
   0.002 mmHg. The keyword is now included for future runs and the published set is disclosed

@@ -3,14 +3,16 @@
 """
 Generate the Supplementary Information LaTeX from the result tables.
 
-Every number is read from results/; nothing is typed by hand. Tables S1-S9 and Figure S1.
+Every number is read from results/; nothing is typed by hand. Tables S1-S16 and Figure S1.
 """
 from pathlib import Path
 import pandas as pd
 
 ROOT = Path(__file__).resolve().parents[1]
-V16 = ROOT / "results"
-V14 = ROOT / "results"
+RES = ROOT / "results"
+V16 = RES
+V21 = RES
+V14 = RES
 OUT = ROOT / "manuscript" / "supplement"
 OUT.mkdir(parents=True, exist_ok=True)
 
@@ -74,7 +76,9 @@ def signed(x, d=3):
     if pd.isna(x):
         return "---"
     v = float(x)
-    return (f"$+${v:.{d}f}" if v >= 0 else f"$-${abs(v):.{d}f}")
+    if abs(v) < 0.5 * 10 ** (-d):      # avoids "+$-0.000"
+        return f"{0:.{d}f}"
+    return (f"$+${v:.{d}f}" if v > 0 else f"$-${abs(v):.{d}f}")
 
 
 def signed_ci(x, lo, hi, d=3):
@@ -101,7 +105,7 @@ W(r"""\documentclass[11pt]{article}
 \large Incremental Value of Pre-Dose Treatment History and Model Complexity for
 Predicting Short-Term Arterial Pressure After Documented Intraoperative Vasopressor
 Bolus-Class Records}
-\author{}
+\author{Ge Gao\\ Department of Anesthesiology, The First Affiliated Hospital, Zhejiang University School of Medicine, Hangzhou, China}
 \date{}
 \begin{document}
 \maketitle
@@ -236,7 +240,7 @@ CMP_LABEL = {
     "history_effect_on_xgb": "History effect (XGB$+$H $-$ XGB)",
     "algorithm_effect_base": "Model class (XGB $-$ Ridge, base)",
     "algorithm_effect_with_hist": "Model class (XGB $-$ Ridge, $+$history)",
-    "best_candidate_vs_baseline": "Primary candidate $-$ baseline-MAP",
+    "best_candidate_vs_baseline": "Preselected XGBoost $-$ baseline-MAP",
 }
 W(r"\footnotesize")
 W(r"\begin{longtable}{p{5.6cm}rccc}")
@@ -271,7 +275,7 @@ strata = r16("map_strata.csv")
 cal = r16("regression_calibration.csv")
 W(r"\section*{Supplementary Table S4. Explanatory performance, regression calibration and error by pre-dose MAP stratum}")
 W(r"\addcontentsline{toc}{section}{Table S4. Explanatory performance, calibration and MAP strata}")
-W(r"""Primary candidate model (XGBoost with treatment history), out-of-fold. Panel (a) gives
+W(r"""Preselected XGBoost reference model (XGBoost with treatment history), out-of-fold. Panel (a) gives
 $R^2$ and the regression calibration slope, each with a patient-cluster bootstrap 95\% CI, the
 baseline-MAP-only reference $R^2$ and the increment over it, and the proportion of predictions in
 error by more than 5, 10 and 15 mmHg. Panel (b) gives mean absolute error by pre-dose MAP stratum
@@ -407,7 +411,7 @@ union = r14("followup_union.csv")
 rate = r14("running_rate_desc.csv")
 W(r"\section*{Supplementary Table S7. Outcome-window intervention, timestamp audit and running-rate reconstruction}")
 W(r"\addcontentsline{toc}{section}{Table S7. Outcome-window, timestamp and running-rate audit}")
-W(r"""Panel (a): out-of-fold MAE of the primary candidate model split by the further treatment
+W(r"""Panel (a): out-of-fold MAE of the preselected XGBoost reference model split by the further treatment
 recorded in the 5-minute outcome window, with the observed mean $\Delta$MAP and baseline MAP.
 Three strata are shown: any additional vasopressor (including a same-drug re-dose), a
 different-drug vasopressor, and a same-drug re-dose. The first stratum is the union of the other
@@ -500,15 +504,372 @@ for drug in DRUG_ORDER:
 W(r"\normalsize")
 W(r"\clearpage")
 
-# ---------- S9: restricted vs unrestricted all-administration cohort (earlier version) ----------
+# ---------- S9: restricted vs unrestricted (carried verbatim from v15 S10) ----------
 W(S9_RESTRICTED_BLOCK)
+
+# ---------- S16: route audit ----------
+route = pd.read_csv(RES / "route_audit.csv")
+W(r"\section*{Supplementary Table S16. Route audit: re-scoring on the explicitly intravenous subset}")
+W(r"\addcontentsline{toc}{section}{Table S16. Route audit}")
+W(r"""The exposure keyword rule excluded recorded non-intravenous routes but did not include
+``intramuscular'', and seven analysed administrations carried that route. This table gives the
+per-drug, per-model count of records by recorded route and the mean absolute error computed on
+the full analysed set and on the explicitly intravenous subset. These are re-scores of the saved
+out-of-fold predictions on a restricted evaluation set; no model was retrained, so the training
+cohort of each model still contains the seven records. The maximum change in any reported error
+is 0.003~mmHg.""")
+W(r"\footnotesize")
+W(r"\begin{longtable}{llrrrrr}")
+W(r"\toprule Drug & Model & $n$ & IV & IM & MAE, all & MAE, IV only \\ \midrule \endhead")
+MLAB2 = {"xgb_sq": "XGBoost, squared loss", "xgb_mae": "XGBoost, absolute loss",
+         "median": "Median regression", "ridge_tuned": "Tuned Ridge", "baseline_map": "Baseline-MAP"}
+for _, r_ in route.iterrows():
+    W(f"{DRUG_LABEL[r_['drug']]} & {MLAB2[r_['model']]} & {int(r_['n_all']):,} & "
+      f"{int(r_['n_intravenous']):,} & {int(r_['n_intramuscular'])} & {r_['mae_all']:.3f} & "
+      f"{r_['mae_intravenous_only']:.3f} \\\\")
+W(r"\bottomrule \end{longtable}")
+W(r"\normalsize")
+W(r"\medskip Missing route: none. Phenylephrine has no non-intravenous record.")
+W(r"\clearpage")
+
+
+
+# ---------- S14: implementation checks ----------
+W(r"\section*{Supplementary Table S14. Implementation checks on the analysis code}")
+W(r"\addcontentsline{toc}{section}{Table S14. Implementation checks}")
+W(r"""Each property below was verified against the saved fold assignments, the saved out-of-fold
+prediction arrays and the feature lists actually passed to the models, rather than by
+re-reading the manuscript. Every check passed.""")
+W(r"\footnotesize")
+W(r"\begin{longtable}{p{7.6cm}p{7.0cm}}")
+W(r"\toprule Check & Result \\ \midrule \endhead")
+CHECKS = [
+ ("Patient isolation, per drug and per repeat",
+  "No patient appears on both sides of a fold, and the five folds partition the patients exactly once: 0 overlap violations in 5 repeats x 5 folds for each of the four drugs"),
+ ("One prediction per event per repeat",
+  "No missing values in any out-of-fold array; array width equals the analysed cohort size for every drug and feature set"),
+ ("Repeats are distinct partitions",
+  "Each drug's five out-of-fold vectors differ from one another, so five repeats are five partitions rather than one partition scored five times"),
+ ("No post-dose information in the feature lists",
+  "None of the 27 base and history features begins fu\\_ (the 12 follow-up columns in the table are unused); the outcome column is not a feature"),
+ ("Exposure-class consistency",
+  "The analysed subset for each drug contains only records classified as intravenous bolus; no other class enters the analysis"),
+ ("Outcome-observability denominator",
+  "Analysable events as a fraction of documented intravenous-bolus medication-record rows: phenylephrine 29,114/214,385 (13.6\\%), ephedrine 11,585/75,945 (15.2\\%), vasopressin 6,352/39,819 (16.0\\%). Upper bound only: the census counts every bolus row on a case with a documented candidate, without requiring an eligible surgery or arterial-pressure window"),
+]
+for a, b in CHECKS:
+    W(f"{a} & {b} \\\\")
+W(r"\bottomrule \end{longtable}")
+W(r"\normalsize")
+W(r"\medskip\emph{What these checks do not establish.} They confirm that the code implements the described "
+  r"partition, prediction and feature rules. They do not verify that a medication-record entry labelled as a "
+  r"bolus corresponds to a clinical intravenous push, and they cannot detect an error reproduced identically "
+  r"in both the analysis and the result index.")
+W(r"\clearpage")
+
+# ---------- S15: XGBoost with an absolute-error objective ----------
+mae_cmp = pd.read_csv(V21 / "mae_xgb_comparison.csv")
+mae_d = pd.read_csv(V21 / "mae_xgb_delta.csv")
+W(r"\section*{Supplementary Table S15. XGBoost trained on absolute error}")
+W(r"\addcontentsline{toc}{section}{Table S15. XGBoost with an absolute-error objective}")
+W(r"""The main-text XGBoost model was trained on squared error while the median regression
+minimised absolute error, so the comparison between them reflected both model class and
+training objective. Here XGBoost is refitted with the absolute-error objective
+(\texttt{reg:absoluteerror}) on the identical folds and events, with the same
+12-configuration randomised search scored on mean absolute error over the same inner
+patient-grouped three-fold splits. Panel (a) gives mean absolute error for the three
+configurations; panel (b) gives the paired differences. Negative favours the first-named
+model.""")
+W(r"\textbf{(a) Mean absolute error.}")
+W(r"\footnotesize")
+W(r"\begin{longtable}{llrrrr}")
+W(r"\toprule Drug & Features & XGBoost (squared error) & XGBoost (absolute error) & Median reg. & Tuned Ridge \\ \midrule \endhead")
+for drug in DRUG_ORDER:
+    for feat in ["base", "base+hist"]:
+        m = mae_cmp[(mae_cmp.drug == drug) & (mae_cmp.features == feat)]
+        sq = r14("model_comparison.csv")
+        sqv = sq[(sq.drug == drug) & (sq.features == feat) & (sq.model == "xgb")]
+        med = r16("model_comparison_linear.csv")
+        medv = med[(med.drug == drug) & (med.features == feat) & (med.model == "median")]
+        rid = med[(med.drug == drug) & (med.features == feat) & (med.model == "ridge_tuned")]
+        W(f"{DRUG_LABEL[drug]} & {esc(feat)} & {fnum(sqv.mae_mean.iloc[0],2) if len(sqv) else '---'} & "
+          f"{fnum(m.mae_mean.iloc[0],2) if len(m) else '---'} & "
+          f"{fnum(medv.mae_mean.iloc[0],2) if len(medv) else '---'} & "
+          f"{fnum(rid.mae_mean.iloc[0],2) if len(rid) else '---'} \\\\")
+W(r"\bottomrule \end{longtable}")
+W(r"\normalsize")
+W(r"\medskip")
+W(r"\textbf{(b) Paired differences in mean absolute error.}")
+MAE_LABEL = {
+ "mae_xgb_vs_squared_xgb_base": "XGBoost (absolute) $-$ XGBoost (squared), base",
+ "mae_xgb_vs_squared_xgb_hist": "XGBoost (absolute) $-$ XGBoost (squared), $+$history",
+ "mae_xgb_vs_median_base": "XGBoost (absolute) $-$ median regression, base",
+ "mae_xgb_vs_median_hist": "XGBoost (absolute) $-$ median regression, $+$history",
+ "mae_xgb_vs_ridge_tuned_base": "XGBoost (absolute) $-$ tuned Ridge, base",
+ "mae_xgb_hist_vs_baseline": "XGBoost (absolute, $+$history) $-$ baseline-MAP",
+}
+W(r"\footnotesize")
+W(r"\begin{longtable}{p{7.0cm}rccc}")
+W(r"\toprule Comparison & $n$ & $\Delta$MAE (95\% CI) & SD & Range \\ \midrule \endhead")
+for drug in DRUG_ORDER:
+    sub = mae_d[mae_d.drug == drug]
+    if sub.empty:
+        continue
+    W(rf"\multicolumn{{5}}{{l}}{{\textbf{{{DRUG_LABEL[drug]}}}}} \\")
+    for key, lab in MAE_LABEL.items():
+        q = sub[sub.comparison == key]
+        if q.empty:
+            continue
+        q = q.iloc[0]
+        W(f"{lab} & {int(q['n']):,} & {signed_ci(q['dmae'], q['ci_lo'], q['ci_hi'])} & "
+          f"{fnum(q['sd_across_partitions'],3)} & {signed(q['min_partition'])} to {signed(q['max_partition'])} \\\\")
+W(r"\bottomrule \end{longtable}")
+W(r"\normalsize")
+W(r"\clearpage")
+
+
+
+# ---------- S10: substantive changes across versions ----------
+W(r"\section*{Supplementary Table S10. Substantive changes across versions of this analysis}")
+W(r"\addcontentsline{toc}{section}{Table S10. Version history}")
+W(r"""The analysis was revised repeatedly in the light of earlier analyses of the same database and of
+earlier analyses of the same database. Only versions in which the cohort definition or a reading of the results changed
+substantively are listed; purely editorial revisions are omitted. None of the versions was publicly
+registered, so the sequence is a record of what was done, not a pre-specification.""")
+VERSIONS = [
+ ("Earlier version A", "All documented administrations of five agents in a two-database design (VitalDB and MOVER); epinephrine later excluded after an intravenous-route check",
+  "A baseline-MAP-only reference was competitive with or better than every model"),
+ ("Earlier version B", "MOVER only; administrations not followed by a different vasopressor within 10 min (a selection on post-dose care)",
+  "Same qualitative reading; the norepinephrine increment was null"),
+ ("Earlier version C", "All arterial-MAP-linked administrations with no post-dose selection (53,324 events, four study drugs)",
+  "The norepinephrine increment favoured the model but only in the above-75 mmHg stratum, and was judged unstable"),
+ ("Earlier version D", "Intravenous-bolus class only (47,808 events, four study drugs); the orthogonal design over treatment history and model class was introduced",
+  "Both increments small; the norepinephrine bolus cohort (757 events) was too small for a stable estimate"),
+ ("Current version", "Intravenous-bolus class of the three primary drugs (47,051 events); norepinephrine exploratory; per-partition scoring; calibrated probability model; tuned Ridge and median-regression comparators; baseline-MAP-only probability model; no-further-vasopressor sensitivity cohort",
+  "As reported in the main text"),
+]
+W(r"\footnotesize")
+W(r"\begin{longtable}{p{2.6cm}p{7.4cm}p{5.4cm}}")
+W(r"\toprule Version & Cohort definition & Change in reading \\ \midrule \endhead")
+for v, c, r_ in VERSIONS:
+    W(f"{esc(v)} & {esc(c)} & {esc(r_)} \\\\")
+W(r"\bottomrule \end{longtable}")
+W(r"\normalsize")
+W(r"\clearpage")
+
+# ---------- S11: fair linear comparators (tuned Ridge, median regression) ----------
+v19d = r16("delta_mae.csv")
+v19m = r16("model_comparison_linear.csv")
+alph = r16("ridge_alphas.csv")
+W(r"\section*{Supplementary Table S11. Fair linear comparators: tuned Ridge and median regression}")
+W(r"\addcontentsline{toc}{section}{Table S11. Tuned Ridge and median regression}")
+W(r"""The main-text Ridge comparison uses a fixed penalty (alpha $=1$) while XGBoost receives an inner
+cross-validated random search. To test whether that asymmetry favours the gradient-boosted model we
+refitted, on the identical folds and events, (i) Ridge with alpha selected by inner patient-grouped
+3-fold cross-validation scored on MAE over a grid of 11 values from 0.01 to 1000, and (ii) a median
+($\tau=0.5$) quantile regression, a linear model whose objective is the evaluation metric itself.
+XGBoost was fitted with the squared-error objective (the library default), so the XGBoost-versus-median
+comparison differs in both model class and training objective and does not separate the two.
+All quantities are per-partition means with patient-cluster bootstrap 95\% CIs. Panel (a) gives mean
+absolute error; panel (b) gives the paired differences; negative favours the first-named model.""")
+W(r"\textbf{(a) Mean absolute error.}")
+W(r"\footnotesize")
+W(r"\begin{longtable}{llrrrr}")
+W(r"\toprule Drug & Features & Ridge ($\alpha=1$) & Ridge (tuned) & Median reg. & XGBoost \\ \midrule \endhead")
+v14m = r14("model_comparison.csv")
+for drug in DRUG_ORDER:
+    for feat in ["base", "base+hist"]:
+        row = {}
+        for model in ["ridge", "ridge_tuned", "median", "xgb"]:
+            if model == "ridge":
+                q = v14m[(v14m.drug == drug) & (v14m.features == feat) & (v14m.model == "ridge")]
+            else:
+                q = v19m[(v19m.drug == drug) & (v19m.features == feat) & (v19m.model == model)]
+            row[model] = fnum(q.mae_mean.iloc[0], 2) if len(q) else "---"
+        W(f"{DRUG_LABEL[drug]} & {esc(feat)} & {row['ridge']} & {row['ridge_tuned']} & {row['median']} & {row['xgb']} \\\\")
+W(r"\bottomrule \end{longtable}")
+W(r"\normalsize")
+al = alph[alph.features == "base"]
+W(r"\medskip")
+W(r"\textbf{Selected Ridge penalties.} Reported as the median and the range across the 25 fold fits, "
+  r"per drug and feature set; a single value means the inner search chose the same penalty in every fit.")
+W(r"\footnotesize")
+W(r"\begin{longtable}{llrrr}")
+W(r"\toprule Drug & Feature set & Median $\alpha$ & Min & Max \\ \midrule \endhead")
+for drug in DRUG_ORDER:
+    for feat in ["base", "base+hist"]:
+        q = alph[(alph.drug == drug) & (alph.features == feat)]["alpha"]
+        if q.empty:
+            continue
+        W(f"{DRUG_LABEL[drug]} & {esc(feat)} & {q.median():.3g} & {q.min():.3g} & {q.max():.3g} \\\\")
+W(r"\bottomrule \end{longtable}")
+W(r"\normalsize")
+W(r"\medskip")
+W(r"\textbf{(b) Paired differences against each linear comparator.}")
+V19_LABEL = {
+ "tuned_vs_fixed_ridge_base": "Tuned Ridge $-$ Ridge ($\\alpha=1$), base",
+ "tuned_vs_fixed_ridge_hist": "Tuned Ridge $-$ Ridge ($\\alpha=1$), $+$history",
+ "history_effect_on_ridge_tuned": "History effect on tuned Ridge",
+ "history_effect_on_median": "History effect on median regression",
+ "algorithm_effect_base_vs_ridge_tuned": "XGBoost $-$ tuned Ridge, base",
+ "algorithm_effect_hist_vs_ridge_tuned": "XGBoost $-$ tuned Ridge, $+$history",
+ "algorithm_effect_base_vs_median": "XGBoost $-$ median regression, base",
+ "algorithm_effect_hist_vs_median": "XGBoost $-$ median regression, $+$history",
+ "median_vs_ridge_tuned_base": "Median regression $-$ tuned Ridge, base",
+ "ridge_tuned_hist_vs_baseline": "Tuned Ridge with history $-$ baseline-MAP",
+ "median_hist_vs_baseline": "Median regression with history $-$ baseline-MAP",
+}
+W(r"\footnotesize")
+W(r"\begin{longtable}{p{6.4cm}rccc}")
+W(r"\toprule Comparison & $n$ & $\Delta$MAE (95\% CI) & SD & Range \\ \midrule \endhead")
+for drug in DRUG_ORDER:
+    sub = v19d[v19d.drug == drug]
+    if sub.empty:
+        continue
+    W(rf"\multicolumn{{5}}{{l}}{{\textbf{{{DRUG_LABEL[drug]}}} ({esc(sub['role'].iloc[0])})}} \\")
+    for key, lab in V19_LABEL.items():
+        r_ = sub[sub.comparison == key]
+        if r_.empty:
+            continue
+        r_ = r_.iloc[0]
+        W(f"{lab} & {int(r_['n']):,} & {signed_ci(r_['dmae'], r_['ci_lo'], r_['ci_hi'])} & "
+          f"{fnum(r_['sd_across_partitions'],3)} & {signed(r_['min_partition'])} to {signed(r_['max_partition'])} \\\\")
+W(r"\bottomrule \end{longtable}")
+W(r"\normalsize")
+W(r"\clearpage")
+
+# ---------- S12: baseline-MAP-only probability model ----------
+vc = r16("classifier_vs_maponly.csv")
+vd = r16("classifier_paired_diff.csv")
+W(r"\section*{Supplementary Table S12. Probability model versus a baseline-MAP-only probability model}")
+W(r"\addcontentsline{toc}{section}{Table S12. Baseline-MAP-only probability model}")
+W(r"""The main-text Brier skill compares each classifier with an out-of-fold prevalence null, which is
+a weak reference: a clinician asking whether to give a vasopressor already knows the current pressure.
+We therefore fitted a probability model on pre-dose MAP alone (logistic regression on a single
+variable, median-imputed within each training fold) on the identical folds, and computed the
+increment of the full classifiers over it. Panel (a) gives discrimination, Brier score and the Brier
+skill relative to the MAP-only model; panel (b) gives the paired difference (full model minus MAP-only
+model) with a patient-cluster bootstrap 95\% CI that resamples the same patients for both models.""")
+W(r"\textbf{(a) Performance of the MAP-only reference and the full classifiers.}")
+W(r"\footnotesize")
+W(r"\begin{longtable}{llrrcccc}")
+W(r"\toprule Drug & Scope & $n$ & Model & AUROC (95\% CI) & Brier & Calib.\ slope & Skill vs MAP-only \\ \midrule \endhead")
+MLAB = {"logit_map": "MAP only", "logit": "Logistic", "xgb": "XGBoost"}
+for drug in DRUG_ORDER:
+    for scope in ["whole", "below65"]:
+        for model in ["logit_map", "logit", "xgb"]:
+            r_ = vc[(vc.drug == drug) & (vc.scope == scope) & (vc.model == model)]
+            if r_.empty:
+                continue
+            r_ = r_.iloc[0]
+            sk = "---" if pd.isna(r_["brier_skill_vs_maponly"]) else f"{fnum(r_['brier_skill_vs_maponly']*100,1)}\\%"
+            W(f"{DRUG_LABEL[drug]} & {esc(scope)} & {int(r_['n']):,} & {MLAB[model]} & "
+              f"{fnum(r_['auroc_mean'],3)} ({fnum(r_['auroc_lo'],3)}--{fnum(r_['auroc_hi'],3)}) & "
+              f"{fnum(r_['brier_mean'],3)} & {fnum(r_['calib_slope_mean'],3)} & {sk} \\\\")
+W(r"\bottomrule \end{longtable}")
+W(r"\normalsize")
+W(r"\medskip")
+W(r"\textbf{(b) Paired difference from the MAP-only model (positive favours the full model for AUROC, negative for Brier).}")
+W(r"\footnotesize")
+W(r"\begin{longtable}{lllrc}")
+W(r"\toprule Drug & Scope & Model & Metric & Difference (95\% CI) \\ \midrule \endhead")
+for drug in DRUG_ORDER:
+    for scope in ["whole", "below65"]:
+        for model in ["logit", "xgb"]:
+            for mname in ["auroc", "brier"]:
+                r_ = vd[(vd.drug == drug) & (vd.scope == scope) & (vd.model == model) & (vd.metric == mname)]
+                if r_.empty:
+                    continue
+                r_ = r_.iloc[0]
+                W(f"{DRUG_LABEL[drug]} & {esc(scope)} & {MLAB[model]} & {mname.upper() if mname=='auroc' else 'Brier'} & "
+                  f"{signed(r_['diff_vs_maponly'],3)} ({signed(r_['ci_lo'],3)} to {signed(r_['ci_hi'],3)}) \\\\")
+W(r"\bottomrule \end{longtable}")
+W(r"\normalsize")
+W(r"\clearpage")
+
+# ---------- S13: no-further-vasopressor sensitivity cohort ----------
+scq = r16("sens_quality.csv")
+scd = r16("sens_delta_mae.csv")
+scc = r16("sens_classifier.csv")
+scoh = r16("sens_cohort.csv")
+W(r"\section*{Supplementary Table S13. Sensitivity analysis excluding administrations followed by further vasopressor treatment}")
+W(r"\addcontentsline{toc}{section}{Table S13. No-further-vasopressor sensitivity cohort}")
+W(r"""In the primary analysis the outcome is the observed pressure change, which a clinician's further
+treatment can itself alter. We therefore re-fitted every model on the subset of administrations with
+no further vasopressor record (a different drug or a same-drug re-dose) at or before $+6$ minutes,
+the end of the $+4$ to $+6$ minute outcome window, and separately on the excluded complement. An
+administration followed only at $+7$ to $+10$ minutes is retained. This subset is created by a
+selection on post-dose care, so it is a sensitivity analysis and not an unbiased estimate of the
+drug's physiological effect. All quantities are per-partition means with patient-cluster bootstrap
+95\% CIs; folds were redrawn within each cohort by the same patient-grouped rule.""")
+W(r"\textbf{(a) Cohort sizes and explained variance.}")
+W(r"\footnotesize")
+W(r"\begin{longtable}{llrrrrr}")
+W(r"\toprule Cohort & Drug & $n$ & Patients & Obs.\ $\Delta$MAP & $R^2$ (95\% CI) & $R^2$ baseline-MAP \\ \midrule \endhead")
+for drug in DRUG_ORDER_PRIMARY:
+    for c in ["sens", "excluded"]:
+        r_ = scq[(scq.drug == drug) & (scq.cohort == c)]
+        if r_.empty:
+            continue
+        r_ = r_.iloc[0]
+        lab = "No further vasopressor" if c == "sens" else "Excluded complement"
+        W(f"{lab} & {DRUG_LABEL[drug]} & {int(r_['n']):,} & {int(r_['n_patients']):,} & "
+          f"{signed(r_['observed_delta_mean'],2)} & {fnum(r_['r2_mean'],3)} ({fnum(r_['r2_lo'],3)}--{fnum(r_['r2_hi'],3)}) & "
+          f"{fnum(r_['r2_baseline_only'],3)} \\\\")
+W(r"\bottomrule \end{longtable}")
+W(r"\normalsize")
+W(r"\medskip")
+W(r"\textbf{(b) Paired differences in the sensitivity cohort and the excluded complement.}")
+SENS_LABEL = {
+ "history_effect_on_ridge_tuned": "History effect on tuned Ridge",
+ "history_effect_on_xgb": "History effect on XGBoost",
+ "algorithm_effect_base_vs_ridge_tuned": "XGBoost $-$ tuned Ridge, base",
+ "algorithm_effect_hist_vs_ridge_tuned": "XGBoost $-$ tuned Ridge, $+$history",
+ "best_candidate_vs_baseline": "Preselected XGBoost $-$ baseline-MAP",
+}
+W(r"\footnotesize")
+W(r"\begin{longtable}{p{6.2cm}lrr}")
+W(r"\toprule Comparison & Cohort & $n$ & $\Delta$MAE (95\% CI) \\ \midrule \endhead")
+for drug in DRUG_ORDER_PRIMARY:
+    W(rf"\multicolumn{{4}}{{l}}{{\textbf{{{DRUG_LABEL[drug]}}}}} \\")
+    for key, lab in SENS_LABEL.items():
+        for c in ["sens", "excluded"]:
+            r_ = scd[(scd.drug == drug) & (scd.cohort == c) & (scd.comparison == key)]
+            if r_.empty:
+                continue
+            r_ = r_.iloc[0]
+            cl = "No further" if c == "sens" else "Excluded"
+            W(f"{lab} & {cl} & {int(r_['n']):,} & {signed_ci(r_['dmae'], r_['ci_lo'], r_['ci_hi'])} \\\\")
+W(r"\bottomrule \end{longtable}")
+W(r"\normalsize")
+W(r"\medskip")
+W(r"\textbf{(c) Probability model in the sensitivity cohort.}")
+W(r"\footnotesize")
+W(r"\begin{longtable}{llrrccc}")
+W(r"\toprule Drug & Scope & $n$ & Model & AUROC (95\% CI) & Brier & Skill vs MAP-only \\ \midrule \endhead")
+for drug in DRUG_ORDER_PRIMARY:
+    for scope in ["whole", "below65"]:
+        for model in ["logit_map", "xgb"]:
+            r_ = scc[(scc.drug == drug) & (scc.cohort == "sens") & (scc.scope == scope) & (scc.model == model)]
+            if r_.empty:
+                continue
+            r_ = r_.iloc[0]
+            sk = "---" if pd.isna(r_["brier_skill_vs_maponly"]) else f"{fnum(r_['brier_skill_vs_maponly']*100,1)}\\%"
+            W(f"{DRUG_LABEL[drug]} & {esc(scope)} & {int(r_['n']):,} & {MLAB[model]} & "
+              f"{fnum(r_['auroc_mean'],3)} ({fnum(r_['auroc_lo'],3)}--{fnum(r_['auroc_hi'],3)}) & "
+              f"{fnum(r_['brier_mean'],3)} & {sk} \\\\")
+W(r"\bottomrule \end{longtable}")
+W(r"\normalsize")
+W(r"\clearpage")
+
+
 
 # ---------- Figure S1 ----------
 W(r"\section*{Supplementary Figure S1. Prediction error and observed change by post-dose intervention}")
 W(r"\addcontentsline{toc}{section}{Figure S1. Error by post-dose intervention}")
 W(r"\begin{figure}[htbp]\centering\includegraphics[width=0.92\textwidth]{figures/figS_intervention.png}")
 W(r"""\caption{Supplementary Figure S1. Out-of-fold mean absolute error (bars from zero; $n$ per
-bar) of the primary candidate model for administrations with and without further treatment in
+bar) of the preselected XGBoost reference model for administrations with and without further treatment in
 the 5-minute outcome window, per primary drug, under three overlapping stratifications: any
 additional vasopressor including a same-drug re-dose (left), a different-drug vasopressor
 (centre) and a same-drug re-dose (right). The left stratum is the union of the other two.
@@ -519,6 +880,7 @@ W(r"\label{fig:s1}\end{figure}")
 W(r"\end{document}")
 
 # ========================= WRITE =========================
+OUT = ROOT / "manuscript" / "supplement"
 OUT.mkdir(parents=True, exist_ok=True)
 (OUT / "supplementary_information.tex").write_text("\n".join(P) + "\n", encoding="utf-8")
 print(f"WROTE {OUT/'supplementary_information.tex'} ({len(P)} lines)")

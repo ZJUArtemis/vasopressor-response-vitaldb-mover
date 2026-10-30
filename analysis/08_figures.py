@@ -33,8 +33,15 @@ def hide(ax):
 # ---------------- Figure 2: three pre-specified paired comparisons ----------------
 d = pd.read_csv(A / 'delta_mae.csv')
 C = [("history_effect_on_xgb", "Treatment history\n(XGB+H - XGB)"),
-     ("algorithm_effect_base", "Algorithm\n(XGB - Ridge, base)"),
+     ("algorithm_effect_base", "Model class, both squared loss\n(XGB - Ridge, base)"),
+     ("MAE_LOSS_MATCHED", "Model class, both absolute loss\n(MAE-XGB - median reg., base)"),
      ("best_candidate_vs_baseline", "Candidate vs baseline-MAP\n(XGB+H - baseline)")]
+# the loss-matched row comes from the absolute-error XGBoost comparison
+_mae = pd.read_csv(A / 'mae_xgb_delta.csv')
+_mae = _mae[_mae.comparison == 'mae_xgb_vs_median_base'].copy()
+_mae['comparison'] = 'MAE_LOSS_MATCHED'
+d = pd.concat([d, pd.read_csv(A / 'delta_mae_fair.csv'), _mae[['drug','comparison','dmae','ci_lo','ci_hi','n']]],
+              ignore_index=True)
 sel = d[d.comparison.isin([c for c, _ in C]) & d.drug.isin([dd for dd, _ in D])]
 xmin = min(sel.ci_lo.min(), -1.1); xmax = max(sel.ci_hi.max(), 0.3)
 fig, axes = plt.subplots(1, 3, figsize=(9.5, 3.2), sharey=True, sharex=True)
@@ -43,7 +50,7 @@ for ax, (drug, lab) in zip(axes, D):
     ys = np.arange(len(C))[::-1]
     for y_, (c, _) in zip(ys, C):
         r = s.loc[c]
-        col = ["#2C6E9B", "#E0A33C", "#3FA796"][list(ys).index(y_)]
+        col = ["#2C6E9B", "#E0A33C", "#8E5EA2", "#3FA796"][list(ys).index(y_)]
         ax.errorbar(r.dmae, y_, xerr=[[r.dmae - r.ci_lo], [r.ci_hi - r.dmae]],
                     fmt="o", color=col, capsize=3, lw=1.3)
     ax.axvline(0, color="#555", lw=0.9)
