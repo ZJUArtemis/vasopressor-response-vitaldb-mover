@@ -79,6 +79,7 @@ analysis/            runs locally from the extracted event table
   11_no_further_vasopressor_sensitivity.py  sensitivity cohort with no further treatment
   12_xgboost_absolute_error.py   XGBoost refitted on absolute error (loss-matched comparison)
   13_implementation_checks.py    patient isolation, OOF completeness, feature-leak checks
+  14_strict_baseline_window.py   sensitivity to a strict 2-minute baseline window
 
 results/             aggregate result tables (no row-level data)
 ```
@@ -109,6 +110,7 @@ python analysis/10_fair_linear_comparators.py
 python analysis/11_no_further_vasopressor_sensitivity.py
 python analysis/12_xgboost_absolute_error.py
 python analysis/13_implementation_checks.py
+python analysis/14_strict_baseline_window.py
 python analysis/09_build_supplement.py
 ```
 
@@ -137,6 +139,18 @@ further vasopressor treatment in the outcome window in
 `analysis/06_audit_manuscript.py` checks the reported numbers for internal
 consistency against `results/results_index.csv`. It is a consistency check of the
 reported values, not an independent re-extraction of source data.
+
+### Two implementation details that differ from an ideal protocol
+
+- **Baseline window.** When the 2-minute pre-dose window contained no sample, the published
+  extraction used the median of the 10-minute pre-window rather than excluding the record
+  (0.69% of analysed administrations). `analysis/14_strict_baseline_window.py` recomputes
+  the errors without those records; no mean absolute error changes by more than 0.04 mmHg.
+  `host_extraction/src/mover_io.py` exposes `STRICT_BASELINE_WINDOW` to exclude them instead.
+- **Route.** The route keyword rule did not include "intramuscular"; seven analysed
+  administrations carried that route (0.01%). Removing them changes no error by more than
+  0.002 mmHg. The keyword is now included for future runs and the published set is disclosed
+  in the manuscript rather than silently re-extracted.
 
 ## Data and ethics
 

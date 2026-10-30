@@ -25,6 +25,7 @@ FEATURES_COMMON = ['age', 'sex_male', 'bmi', 'asa', 'dose_rate_at_event',
                    'ctx_surgery_time_min']
 TARGET = 'delta_map_5min'
 GROUP = 'subjectid'
+STRICT_BASELINE_WINDOW = False   # False reproduces the published analysis
 MAP_MIN, MAP_MAX = 20, 300              # arterial MAP physiologic range (artefact rule)
 
 
@@ -118,7 +119,16 @@ def window_stats(mapcase, t0, offset_min=0, pre_s=600, post_s=600):
     if len(pre) < 6:
         return None
     pre_last2 = pre[pre['_t'] >= t_base - pd.Timedelta(seconds=120)]
-    baseline = float(pre_last2['_map'].median()) if len(pre_last2) else float(pre['_map'].median())
+    # Published analysis: when the 2-minute window held no sample, the 10-minute
+    # pre-window median was used instead of excluding the administration (0.69% of
+    # analysed administrations; see Supplementary Table S16). Set STRICT_BASELINE_WINDOW
+    # to True to exclude such administrations instead.
+    if len(pre_last2):
+        baseline = float(pre_last2['_map'].median())
+    elif STRICT_BASELINE_WINDOW:
+        return None
+    else:
+        baseline = float(pre['_map'].median())
     if not np.isfinite(baseline):
         return None
     seg5 = post[(post['_t'] >= t0 + pd.Timedelta(seconds=240)) & (post['_t'] <= t0 + pd.Timedelta(seconds=360))]

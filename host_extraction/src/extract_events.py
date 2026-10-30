@@ -58,9 +58,12 @@ BOLUS_UNITS = {'mcg', 'mg', 'Units', 'units'}
 # report as 'not classifiable from the record'.
 def classify(action, unit, route):
     a = str(action); u = str(unit) if unit is not None else ''; r = str(route).lower() if route is not None else ''
+    # Published analysis used this keyword list, which did not include 'intramuscular';
+    # seven analysed administrations carried that route (disclosed in the manuscript).
+    # 'intramusc' is added here for future runs; it is not applied retrospectively.
     non_iv = any(k in r for k in ['infiltrat', 'topical', 'subcut', 'intraderm', 'nebul', 'irrig',
                                    'oral', 'buccal', 'eye', 'naris', 'nasal', 'epidural', 'intrathecal',
-                                   'perineural', 'cervical', 'vaginal', 'other', 'soak'])
+                                   'perineural', 'cervical', 'vaginal', 'other', 'soak', 'intramusc'])
     if non_iv:
         return 'non_iv_excluded'
     if a in ('Given', 'Bolus', 'Bolus From Bag', 'Given by Other', 'Given By Pt', 'Given in incremental doses'):

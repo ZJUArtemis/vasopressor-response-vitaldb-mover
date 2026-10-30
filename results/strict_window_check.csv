@@ -1,0 +1,4 @@
+drug,n_all,n_fallback,n_strict,mae_all_xgb_sq,mae_strict_xgb_sq,mae_all_xgb_mae,mae_strict_xgb_mae,mae_all_median,mae_strict_median
+phenylephrine,29114,206,28908,10.783,10.762,10.393,10.385,10.609,10.588
+ephedrine,11585,80,11505,12.021,11.989,11.624,11.617,11.885,11.847
+vasopressin,6352,37,6315,11.759,11.754,11.445,11.45,11.478,11.472
