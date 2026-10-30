@@ -35,9 +35,11 @@ implicitly implies.
   tenths of a millimetre of mercury and the model-class effect at most about a
   fifth, against an outcome standard deviation above 20 mmHg and roughly 60% unexplained
   variance.
-- The best candidate model improves on a baseline-MAP-only reference by about
-  0.95–1.04 mmHg, an interval spanning the investigator-set descriptive benchmark
-  of 1 mmHg. The benchmark is not a validated minimum clinically important difference.
+- The preselected squared-error reference model improves on a baseline-MAP-only reference
+  by about 0.95–1.04 mmHg, an interval spanning the investigator-set descriptive benchmark
+  of 1 mmHg. The lowest-error model (absolute-error XGBoost with history) improves on the
+  same baseline by 1.35–1.40 mmHg. The benchmark is not a validated minimum clinically
+  important difference.
 - The model-class ordering depended on the training objective. A linear median regression
   appeared to beat XGBoost by 0.14–0.34 mmHg, but the two had been trained on different
   losses. Refitted on absolute error, XGBoost beat the median regression by 0.22–0.26 mmHg
@@ -111,6 +113,10 @@ python analysis/11_no_further_vasopressor_sensitivity.py
 python analysis/12_xgboost_absolute_error.py
 python analysis/13_implementation_checks.py
 python analysis/14_route_audit.py
+python analysis/05_build_results_index.py   # after every result table exists
+python analysis/06_audit_manuscript.py --tex manuscript/manuscript.tex
+python analysis/07_figure1_cohort_flow.py
+python analysis/08_figures.py
 python analysis/09_build_supplement.py
 ```
 

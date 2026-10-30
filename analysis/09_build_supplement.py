@@ -658,7 +658,7 @@ W(r"\normalsize")
 W(r"\clearpage")
 
 # ---------- S11: fair linear comparators (tuned Ridge, median regression) ----------
-v19d = r16("delta_mae.csv")
+v19d = r16("delta_mae_fair.csv")
 v19m = r16("model_comparison_linear.csv")
 alph = r16("ridge_alphas.csv")
 W(r"\section*{Supplementary Table S11. Fair linear comparators: tuned Ridge and median regression}")
@@ -726,6 +726,9 @@ for drug in DRUG_ORDER:
     sub = v19d[v19d.drug == drug]
     if sub.empty:
         continue
+    missing = [k for k in V19_LABEL if sub[sub.comparison == k].empty]
+    if missing:
+        raise SystemExit(f"S11(b) incomplete for {drug}: missing comparisons {missing}")
     W(rf"\multicolumn{{5}}{{l}}{{\textbf{{{DRUG_LABEL[drug]}}} ({esc(sub['role'].iloc[0])})}} \\")
     for key, lab in V19_LABEL.items():
         r_ = sub[sub.comparison == key]
